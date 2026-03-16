@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Multi PDF RAG · Chat</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="orbs" aria-hidden="true">
+    <div class="orb a"></div>
+    <div class="orb b"></div>
+    <div class="orb c"></div>
+  </div>
+  <div class="grid-lines" aria-hidden="true"></div>
+
+  <div class="layout">
+    <header>
+      <div class="brand"><span class="dot"></span> Multi PDF RAG</div>
+      <nav>
+        <a class="nav-link" href="/">Home</a>
+        <a class="nav-link" href="/health">API Health</a>
+      </nav>
+    </header>
+
+    <div class="chat-layout">
+      <div class="chat-panel card-strong">
+        <div class="badge">Context</div>
+        <h2>Chat with your PDFs</h2>
+        <p class="chat-meta">Local embeddings via Ollama. Sources are cited with page numbers.</p>
+        <div class="feature-card" style="margin-top:12px;">
+          <h4>Tips</h4>
+          <p class="subtle">Ask for comparisons, summaries, or references. Keep session id the same to retain history.</p>
+        </div>
+        <div class="samples" style="margin-top:12px;">
+          <button class="sample-btn" data-sample="Summarize the main conflict in Death Note and cite pages.">Death Note summary</button>
+          <button class="sample-btn" data-sample="List three standout matches in Gran Turismo 7 with sources.">GT7 matches</button>
+          <button class="sample-btn" data-sample="Compare the themes of SteinsGate and Psycho-Pass with citations.">Compare themes</button>
+        </div>
+        <div class="session">
+          <label class="badge-pill" for="session-input">Session</label>
+          <input id="session-input" name="session" placeholder="session id" aria-label="Session id" />
+        </div>
+        <div class="status" id="status">Ready. Ollama server must be running.</div>
+      </div>
+
+      <div class="chat-panel">
+        <div class="chat-window">
+          <div class="messages" id="messages"></div>
+          <form id="chat-form" class="form-row">
+            <input class="input" id="chat-input" name="question" placeholder="Ask about a PDF..." autocomplete="off" />
+            <button class="btn" type="submit" id="send-btn">Send</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <footer>Need a fresh session? Change the id above. Index builds automatically on first API call.</footer>
+  </div>
+
+  <script>
+    const messagesEl = document.getElementById('messages');
+    const statusEl = document.getElementById('status');
+    const chatForm = document.getElementById('chat-form');
+    const inputEl = document.getElementById('chat-input');
+    const sendBtn = document.getElementById('send-btn');
+    const sessionEl = document.getElementById('session-input');
+
+    const API_URL = '/chat';
+
+    function randomSession() {
+      return 'sess-' + Math.random().toString(36).slice(2, 8);
+    }
+
+    function loadSession() {
+      const stored = localStorage.getItem('aurora-session') || randomSession();
+      sessionEl.value = stored;
+      localStorage.setItem('aurora-session', stored);
+      return stored;
+    }
+
+    function setStatus(text) {
+      statusEl.textContent = text;
+    }
+
+    function appendMessage(role, text, sources = []) {
+      const wrap = document.createElement('div');
+      wrap.className = `message ${role}`;
+      wrap.textContent = text;
+
+      if (role === 'bot' && sources.length) {
+        const srcWrap = document.createElement('div');
+        srcWrap.className = 'sources';
+        sources.forEach((s) => {
+          const pill = document.createElement('span');
+          pill.className = 'source-pill';
+          const src = s.source ? s.source.split('/').pop() : 'source';
+          const page = s.page !== undefined && s.page !== null ? ` · p${s.page}` : '';
+          pill.textContent = `${src}${page}`;
+          srcWrap.appendChild(pill);
+        });
+        wrap.appendChild(srcWrap);
+      }
+
+      messagesEl.appendChild(wrap);
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    let sessionId = loadSession();
+
+    sessionEl.addEventListener('change', () => {
+      sessionId = sessionEl.value.trim() || randomSession();
+      sessionEl.value = sessionId;
+      localStorage.setItem('aurora-session', sessionId);
+      setStatus('Session updated.');
+    });
+
+    async function sendMessage(evt) {
+      evt.preventDefault();
+      const question = inputEl.value.trim();
+      if (!question) {
+        return;
+      }
+
+      appendMessage('user', question);
+      inputEl.value = '';
+      setStatus('Thinking...');
+      sendBtn.disabled = true;
+
+      try {
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ question, session_id: sessionId })
+        });
+
+        if (!res.ok) {
+          throw new Error('API error');
+        }
+
+        const data = await res.json();
+        appendMessage('bot', data.answer || 'No answer returned.', data.sources || []);
+        setStatus('Ready.');
+      } catch (err) {
+        appendMessage('bot', 'There was a problem contacting the API. Is the server running?');
+        setStatus('Error — check console.');
+        console.error(err);
+      } finally {
+        sendBtn.disabled = false;
+      }
+    }
+
+    chatForm.addEventListener('submit', sendMessage);
+
+    document.querySelectorAll('.sample-btn').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        inputEl.value = btn.dataset.sample;
+        inputEl.focus();
+      });
+    });
+
+    appendMessage('bot', 'Hi! Ask about any PDF in the library and I will cite pages.');
+  </script>
+</body>
+</html>

@@ -4,3 +4,10 @@ lxml
 python-docx
 docx2pdf
 tqdm
+flask
+python-dotenv
+langchain==0.3.7
+langchain-community==0.3.7
+langchain-ollama==0.2.1
+faiss-cpu
+pypdf

@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Otaku Oracle Assistant</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="orbs" aria-hidden="true">
+    <div class="orb a"></div>
+    <div class="orb b"></div>
+    <div class="orb c"></div>
+  </div>
+  <div class="grid-lines" aria-hidden="true"></div>
+
+  <div class="layout">
+    <header>
+      <div class="brand"><span class="dot"></span> Otaku Oracle</div>
+      <nav>
+        <a class="nav-link" href="/chat-ui">Chat</a>
+        <a class="nav-link" href="/health">API Health</a>
+        <a class="btn" href="/chat-ui">Launch Chat</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <div>
+        <div class="badge">
+          <span>Realtime · Anime & Game RAG</span>
+        </div>
+        <h1>Welcome to Otaku Oracle that feels alive.</h1>
+        <p class="lede">Ask across your anime and game PDFs with local Ollama. Quick retrieval built for delight.</p>
+        <div style="display:flex; gap:12px; flex-wrap:wrap; margin:18px 0 12px;">
+          <a class="btn" href="/chat-ui">Open Chat</a>
+        </div>
+        <div class="stats">
+          <div class="stat card">
+            <div class="value">PDFs</div>
+            <div class="subtle">Anime + Games Library</div>
+          </div>
+          <div class="stat card">
+            <div class="value">Local</div>
+            <div class="subtle">Ollama embeddings + chat</div>
+          </div>
+          <div class="stat card">
+            <div class="value">FAISS</div>
+            <div class="subtle">Fast vector search</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card card-strong" style="position:relative; overflow:hidden;">
+        <div class="pill" style="margin-bottom:10px;">Live preview</div>
+        <div class="feature-card" style="margin-bottom:10px;">
+          <h4>User</h4>
+          <div class="subtle">“Summarize the best arcs for Hunter x Hunter and cite sources.”</div>
+        </div>
+        <div class="feature-card card-strong" style="border-color: rgba(56,189,248,0.4);">
+          <h4>Assistant</h4>
+          <div class="subtle">Pulling context from PDFs, chunking with LangChain, citing pages.</div>
+          <div class="sources" style="margin-top:10px;">
+            <span class="source-pill">H_x_H_2011.pdf · p12</span>
+            <span class="source-pill">H_x_H_2011.pdf · p38</span>
+          </div>
+        </div>
+        <div class="feature-card" style="display:flex; gap:10px; align-items:center;">
+          <div class="pill" style="border-color: rgba(245,158,11,0.4); color: var(--text);">Motion</div>
+          <div class="subtle">Floating auroras and soft parallax keep it lively.</div>
+        </div>
+      </div>
+    </section>
+
+    <section style="margin-top:14px;">
+      <div class="badge">Why it feels premium</div>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h4>Glass panels</h4>
+          <p class="subtle">Layered transparency with animated gradients to keep the surface dynamic.</p>
+        </div>
+        <div class="feature-card">
+          <h4>Responsive motion</h4>
+          <p class="subtle">Orbs float, gradients drift, and hover states lift cards without distraction.</p>
+        </div>
+        <div class="feature-card">
+          <h4>Instant answers</h4>
+          <p class="subtle">LangChain + FAISS + Ollama keep queries fast while citing pages.</p>
+        </div>
+      </div>
+    </section>
+
+    <section style="margin-top:32px;">
+      <div class="badge">Flow</div>
+
+      <div class="steps">
+        <div class="step">
+          <strong>1. Browse</strong>
+          <div class="subtle">Point at PDFs already in data/pdf_files.</div>
+        </div>
+        <div class="step">
+          <strong>2. Ask</strong>
+          <div class="subtle">Questions stay in session via /chat.</div>
+        </div>
+        <div class="step">
+          <strong>3. Cite</strong>
+          <div class="subtle">Answers return sources with page numbers.</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">
+      Built for your local RAG stack. Fire up Ollama, start the server, and enjoy the motion.
+    </div>
+  </div>
+</body>
+</html>
